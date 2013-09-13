@@ -1,26 +1,47 @@
 #!/bin/sh
 
+########
+# config
+
 # date stamp for backups
 date_stamp=`date "+%Y%m%d%H%M%S"`
 
+# repos for pathogen
+pathogen_repo_host="https://github.com"
+pathogen_repos="
+  tpope/vim-sensible
+  tpope/vim-fugitive
+  Shougo/neocomplcache.vim
+  scrooloose/syntastic
+  tomasr/molokai"
+
+
+###################
+# support functions
+
 backup () {
+	# infer dest name; check for existence
 	dst=$1.$date_stamp
 	if [ -e $dst ]
 	then
 		printf "Backup target %s already exists - aborting\n" $dst
 		exit 1
 	fi
+	# move to backup dest
 	mv $1 $dst
 	printf "Moved %s to %s\n" $1 $dst
 }
 
 get_dep_path () {
-	# extract leading path from arg
-	dep_path=`dirname $1`
-	# enter leading path dir and run pwd, returning result to stdout
-	cd $dep_path
+	# extract and enter leading path from arg
+	cd `dirname $1`
+	# run pwd, returning result to stdout
 	pwd
 }
+
+
+#############
+# main script
 
 # make sure this is invoked from the home directory
 wd=`pwd`
@@ -45,12 +66,11 @@ cp -r $dep_path/ftplugin .vim/
 # set up pathogen
 mkdir .vim/autoload .vim/bundle
 curl -Sso .vim/autoload/pathogen.vim \
-    https://raw.github.com/tpope/vim-pathogen/master/autoload/pathogen.vim
+	https://raw.github.com/tpope/vim-pathogen/master/autoload/pathogen.vim
 
-# fetch plugins
+# fetch plugins etc...
 cd .vim/bundle
-git clone https://github.com/tpope/vim-sensible
-git clone https://github.com/tpope/vim-fugitive
-git clone https://github.com/Shougo/neocomplcache.vim
-git clone https://github.com/scrooloose/syntastic
-git clone https://github.com/tomasr/molokai
+for repo in ${pathogen_repos[@]}
+do
+	git clone $pathogen_repo_host/$repo
+done
