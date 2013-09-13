@@ -17,7 +17,7 @@ set hlsearch
 " syntastic
 "let g:syntastic_c_include_dirs = ["../include","include"]
 
-" for gvim only (heavier)
+" for gvim only (generally heavier)
 if has("gui_running")
   " neocomplcache
   let g:acp_enableAtStartup = 0
@@ -25,6 +25,9 @@ if has("gui_running")
   let g:neocomplcache_enable_smart_case = 1
   let g:neocomplcache_min_syntax_length = 3
   inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+else
+  " turn off clipboard support by default
+  set clipboard=exclude:.*
 endif
 
 " key mapping maps
