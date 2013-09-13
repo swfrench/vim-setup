@@ -1,16 +1,5 @@
 #!/bin/sh
 
-# make sure this is invoked from the home directory
-wd=`pwd`
-if [ "$wd" != "$HOME" ]
-then
-	printf "This is not %s's home directory - aborting\n" "$USER"
-	exit 1
-fi
-
-# path containing this setup script and associated deps
-dep_path=`dirname $0`
-
 # date stamp for backups
 date_stamp=`date "+%Y%m%d%H%M%S"`
 
@@ -24,6 +13,25 @@ backup () {
 	mv $1 $dst
 	printf "Moved %s to %s\n" $1 $dst
 }
+
+get_dep_path () {
+	# extract leading path from arg
+	dep_path=`dirname $1`
+	# enter leading path dir and run pwd, returning result to stdout
+	cd $dep_path
+	pwd
+}
+
+# make sure this is invoked from the home directory
+wd=`pwd`
+if [ "$wd" != "$HOME" ]
+then
+	printf "This is not %s's home directory - aborting\n" "$USER"
+	exit 1
+fi
+
+# get path to this script and associated deps
+dep_path=$(get_dep_path $0)
 
 # backup existing config
 [ -d .vim ] && backup .vim
