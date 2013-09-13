@@ -1,5 +1,13 @@
 #!/bin/sh
 
+# make sure this is invoked from the home directory
+wd=`pwd`
+if [ "$wd" != "$HOME" ]
+then
+	printf "This is not %s's home directory - aborting\n" "$USER"
+	exit 1
+fi
+
 # path containing this setup script and associated deps
 dep_path=`dirname $0`
 
@@ -16,9 +24,6 @@ backup () {
 	mv $1 $dst
 	printf "Moved %s to %s\n" $1 $dst
 }
-
-# enter home dir
-cd ~
 
 # backup existing config
 [ -d .vim ] && backup .vim
