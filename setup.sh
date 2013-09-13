@@ -18,7 +18,7 @@ backup () {
 }
 
 # enter home dir
-#cd ~
+cd ~
 
 # backup existing config
 [ -d .vim ] && backup .vim
