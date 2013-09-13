@@ -20,16 +20,17 @@ pathogen_repos="
 # support functions
 
 backup () {
-	# infer dest name; check for existence
-	dst=$1.$date_stamp
-	if [ -e $dst ]
+	if [ -e $1 ]
 	then
-		printf "Backup target %s already exists - aborting\n" $dst
-		exit 1
+		if [ -e $2 ]
+		then
+			printf "Backup target %s already exists - aborting\n" $2
+			exit 1
+		fi
+		# copy to backup dest
+		cp -R $1 $2
+		printf "Backed up %s to %s\n" $1 $2
 	fi
-	# move to backup dest
-	mv $1 $dst
-	printf "Moved %s to %s\n" $1 $dst
 }
 
 get_dep_path () {
@@ -52,16 +53,18 @@ then
 fi
 
 # get path to this script and associated deps
-dep_path=$(get_dep_path $0)
+dep_path=`get_dep_path $0`
 
 # backup existing config
-[ -d .vim ] && backup .vim
-[ -f .vimrc ] && backup .vimrc
+backup .vim .vim.$date_stamp
+backup .vimrc .vimrc.$date_stamp
+
+# clean up (possibly) existing .vim/
+rm -rf .vim/*
 
 # copy in new configs
-mkdir .vim
 cp $dep_path/vimrc .vimrc
-cp -r $dep_path/ftplugin .vim/
+cp -R $dep_path/ftplugin .vim/
 
 # set up pathogen
 mkdir .vim/autoload .vim/bundle
