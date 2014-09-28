@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -v
 
 ########
 # config
@@ -68,12 +68,12 @@ cp -R $dep_path/ftplugin .vim/
 
 # set up pathogen
 mkdir .vim/autoload .vim/bundle
-curl -Sso .vim/autoload/pathogen.vim \
-	https://raw.github.com/tpope/vim-pathogen/master/autoload/pathogen.vim
+curl -LSso ~/.vim/autoload/pathogen.vim \
+	https://raw.githubusercontent.com/tpope/vim-pathogen/master/autoload/pathogen.vim
 
 # fetch plugins etc...
 cd .vim/bundle
-for repo in ${pathogen_repos[@]}
+for repo in $pathogen_repos
 do
 	git clone $pathogen_repo_host/$repo
 done
